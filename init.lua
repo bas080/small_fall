@@ -1,9 +1,3 @@
-local stone_nodes = {
-    ["default:stone"] = true,
-    ["default:desert_stone"] = true,
-    ["default:sandstone"] = true,
-}
-
 minetest.register_on_generated(function(minp, maxp, seed)
     local pr = PseudoRandom(seed + minp.x * 31 + minp.z * 17)
     local dirs = {
@@ -17,8 +11,11 @@ minetest.register_on_generated(function(minp, maxp, seed)
         local pos = {x = x, y = y, z = z}
         local node = minetest.get_node(pos)
 
+        local group = core.get_item_group(node.name, "stone")
+        local is_stone = group ~= nil and group ~= 0
+
         -- Add a random to reduce amount of waterfalls.
-        if stone_nodes[node.name] and pr:next(1, 1000) == 1 then
+        if is_stone and pr:next(1, 1000) == 1 then
             for _, d in ipairs(dirs) do
                 local check_pos = vector.add(pos, d)
 
