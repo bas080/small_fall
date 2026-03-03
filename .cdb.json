@@ -6,5 +6,6 @@
    "name" : "small_fall",
    "short_description" : "Minimal water falls on rock faces.",
    "title" : "Small Fall",
-   "type" : "MOD"
+   "type" : "MOD",
+   "$version": "0.0.2"
 }
