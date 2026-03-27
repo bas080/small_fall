@@ -1,40 +1,50 @@
-minetest.register_on_generated(function(minp, maxp, seed)
-    local pr = PseudoRandom(seed + minp.x * 31 + minp.z * 17)
-    local dirs = {
-        {x = 1, y = 0, z = 0},
-        {x = -1, y = 0, z = 0},
-        {x = 0, y = 0, z = 1},
-        {x = 0, y = 0, z = -1},
-    }
+local register_decoration = luanti_utils.dofile("register_decoration.lua")
 
-    for x = minp.x, maxp.x, 1 do for z = minp.z, maxp.z, 1 do for y = maxp.y, math.max(minp.y, 0), -1 do
-        local pos = {x = x, y = y, z = z}
-        local node = minetest.get_node(pos)
+local dirs = {
+    { x = 1, y = 0, z = 0 },
+    { x = -1, y = 0, z = 0 },
+    { x = 0, y = 0, z = 1 },
+    { x = 0, y = 0, z = -1 },
+}
 
-        local group = core.get_item_group(node.name, "stone")
-        local is_stone = group ~= nil and group ~= 0
+local function try_place_water(pos)
+    local check_pos = vector.new(pos)
 
-        -- Add a random to reduce amount of waterfalls.
-        if is_stone and pr:next(1, 1000) == 1 then
-            for _, d in ipairs(dirs) do
-                local check_pos = vector.add(pos, d)
+    check_pos.y = check_pos.y + 1
 
-                for i = 1, 30 do
-                    local below_node = minetest.get_node(check_pos)
+    for i = 1, 50 do
+        local below_node = core.get_node(check_pos)
 
-                    if below_node.name == "air" then
-                        check_pos.y = check_pos.y - 1
-                    else
-                        if below_node.name == "default:water_source" then
-                            -- Do not place if water is too close to water.
-                            if i < 7 then break end
+        if below_node.name ~= "air" then
+            break
+        end
 
-                            minetest.set_node(pos, {name = "default:water_source"})
-                        end
-                        break
-                    end
-                end
+        check_pos.y = check_pos.y + 1
+
+        if i > 7 then
+            dir = dirs[math.random(#dirs)]
+
+            local p = vector.add(check_pos, dir)
+            local n = core.get_node(vector.add(check_pos, dir))
+
+            if core.get_item_group(n.name, "stone") > 0 then
+                core.set_node(p, { name = "default:water_source" })
             end
         end
-    end end end
-end)
+    end
+end
+
+register_decoration({
+    name = "small_fall:waterfall",
+    place_on = { "default:water_source" },
+    deco_type = "simple",
+    fill_ratio = 0.01, -- controls how often waterfalls spawn
+    y_min = 0,
+    y_max = 1,
+    flags = "liquid_surface",
+    on_position = function(pos)
+        try_place_water(pos)
+    end,
+})
+
+return try_place_water
