@@ -1,11 +1,11 @@
 {
-   "author" : "bas080",
+   "$author" : "bas080",
+   "$version" : "0.0.2",
    "dev_state" : "ACTIVELY_DEVELOPED",
    "license" : "LGPL-2.1-only",
    "media_license" : "LGPL-2.1-only",
    "name" : "small_fall",
    "short_description" : "Minimal water falls on rock faces.",
    "title" : "Small Fall",
-   "type" : "MOD",
-   "$version": "0.0.2"
+   "type" : "MOD"
 }
