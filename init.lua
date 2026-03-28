@@ -16,7 +16,7 @@ local function try_place_water(pos)
         local below_node = core.get_node(check_pos)
 
         if below_node.name ~= "air" then
-            break
+            return false
         end
 
         check_pos.y = check_pos.y + 1
@@ -29,9 +29,12 @@ local function try_place_water(pos)
 
             if core.get_item_group(n.name, "stone") > 0 then
                 core.set_node(p, { name = "default:water_source" })
+                return true
             end
         end
     end
+
+    return false
 end
 
 register_decoration({
