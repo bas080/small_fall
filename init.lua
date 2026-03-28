@@ -22,7 +22,7 @@ local function try_place_water(pos)
         check_pos.y = check_pos.y + 1
 
         if i > 7 then
-            dir = dirs[math.random(#dirs)]
+            local dir = dirs[math.random(#dirs)]
 
             local p = vector.add(check_pos, dir)
             local n = core.get_node(vector.add(check_pos, dir))
